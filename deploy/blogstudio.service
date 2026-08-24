@@ -1,0 +1,30 @@
+[Unit]
+# 서버에서 상시로 띄운다. putty 를 닫아도 계속 돈다.
+#
+# 붙이는 법과 끄는 법은 deploy/운영.md 에 있다.
+#
+# 아래 세 줄을 실제 경로에 맞춘다.
+#   User                 서버에 접속하는 사용자
+#   WorkingDirectory     blogstudio 폴더
+#   ExecStart            그 폴더의 .venv/bin/python
+Description=blogstudio
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/mnt/data/soundlog/blogstudio
+ExecStart=/mnt/data/soundlog/blogstudio/.venv/bin/python run.py
+
+# 포트와 실행 방식은 .env 에 있다. 여기 적으면 두 곳을 관리하게 된다.
+# 키도 여기 적지 않는다 — 유닛 파일은 다른 사용자도 읽을 수 있다.
+
+# 죽으면 다시 띄운다. 다만 계속 죽으면 멈춘다 — 무한 재시작은
+# 원인을 가리고 로그만 불린다.
+Restart=on-failure
+RestartSec=5
+StartLimitBurst=5
+StartLimitIntervalSec=120
+
+[Install]
+WantedBy=multi-user.target
